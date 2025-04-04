@@ -190,7 +190,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize Socket.io connection
     function initSocket() {
-        socket = io('http://localhost:3000');
+        // Use the current origin instead of hardcoded localhost
+        const socketUrl = window.location.hostname === 'localhost' 
+            ? 'http://localhost:10000' 
+            : window.location.origin;
+            
+        socket = io(socketUrl);
         
         socket.on('connect', () => {
             socket.emit('join-room', { roomId: currentRoom, username });
@@ -254,10 +259,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize WebRTC for video calls
     function initWebRTC() {
+        // Use the current origin instead of hardcoded localhost for PeerJS too
+        const peerHost = window.location.hostname === 'localhost' 
+            ? 'localhost' 
+            : window.location.hostname;
+        const peerPort = window.location.hostname === 'localhost' 
+            ? 10000 
+            : (window.location.port || (window.location.protocol === 'https:' ? 443 : 80));
+            
         myPeer = new Peer(undefined, {
-            host: 'localhost',
-            port: 3001,
-            path: '/peerjs'
+            host: peerHost,
+            port: peerPort,
+            path: '/peerjs',
+            secure: window.location.protocol === 'https:'
         });
         
         navigator.mediaDevices.getUserMedia({
@@ -279,10 +293,18 @@ document.addEventListener('DOMContentLoaded', () => {
             socket.on('user-connected', userId => {
                 connectToNewUser(userId, stream);
             });
+        }).catch(err => {
+            console.error("Error accessing media devices:", err);
+            addMessage('System', 'Could not access camera/microphone. Video call disabled.', false);
         });
         
         myPeer.on('open', id => {
             socket.emit('peer-id', { roomId: currentRoom, peerId: id });
+        });
+        
+        myPeer.on('error', err => {
+            console.error("PeerJS error:", err);
+            addMessage('System', 'Video call connection error. Try refreshing the page.', false);
         });
     }
 
