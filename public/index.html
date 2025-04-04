@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncWatch - Watch Movies Together</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SyncWatch</h1>
+            <p>Watch movies together in perfect sync</p>
+        </header>
+
+        <div id="landing-page" class="section">
+            <div class="options">
+                <div class="option-card">
+                    <h2>Create Room</h2>
+                    <form id="create-room-form">
+                        <input type="text" id="username" placeholder="Your nickname" required>
+                        <button type="submit" class="btn primary">Create Room</button>
+                    </form>
+                </div>
+                <div class="option-card">
+                    <h2>Join Room</h2>
+                    <form id="join-room-form">
+                        <input type="text" id="join-username" placeholder="Your nickname" required>
+                        <input type="text" id="room-id" placeholder="Room ID" required>
+                        <button type="submit" class="btn secondary">Join Room</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="room-page" class="section hidden">
+            <div class="room-info">
+                <h2>Room: <span id="room-id-display"></span></h2>
+                <button id="copy-room-link" class="btn">Copy Room Link</button>
+            </div>
+
+            <div class="main-content">
+                <div class="video-container">
+                    <div class="video-options">
+                        <div class="option-tab active" data-target="url-option">URL</div>
+                        <div class="option-tab" data-target="file-option">Local File</div>
+                    </div>
+                    
+                    <div id="url-option" class="video-option-content">
+                        <form id="url-form">
+                            <input type="url" id="video-url" placeholder="Enter video URL" required>
+                            <button type="submit" class="btn">Load Video</button>
+                        </form>
+                    </div>
+                    
+                    <div id="file-option" class="video-option-content hidden">
+                        <form id="file-form">
+                            <input type="file" id="video-file" accept="video/*">
+                            <button type="submit" class="btn">Load Video</button>
+                        </form>
+                    </div>
+                    
+                    <div class="video-wrapper">
+                        <video id="video-player" controls></video>
+                    </div>
+                    
+                    <div class="video-controls">
+                        <button id="play-btn" class="btn">Play</button>
+                        <button id="pause-btn" class="btn">Pause</button>
+                        <button id="sync-btn" class="btn primary">Sync with Me</button>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="video-call">
+                        <h3>Video Call</h3>
+                        <div class="video-grid" id="video-grid"></div>
+                        <div class="call-controls">
+                            <button id="toggle-video" class="btn">Video</button>
+                            <button id="toggle-audio" class="btn">Audio</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-box">
+                        <h3>Chat</h3>
+                        <div id="messages"></div>
+                        <form id="chat-form">
+                            <input type="text" id="message-input" placeholder="Type a message..." required>
+                            <button type="submit" class="btn">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
